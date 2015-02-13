@@ -1,11 +1,17 @@
 [package]
 
-name = "gaussian"
-version = "0.0.1"
+name = "simple_gaussian"
+description = "Some quick and easy functions for generating gaussian noise, mappable to specific bounds. Useful for artistic purposes."
+version = "0.2.4"
 authors = ["mitchmindtree <mitchell.nordine@gmail.com>"]
+readme = "README.md"
+keywords = ["noise", "gaussian", "random", "generator"]
+license = "MIT"
+repository = "https://github.com/mitchmindtree/gaussian.git"
+homepage = "https://github.com/mitchmindtree/gaussian"
 
-[dependencies.utils]
-git = "https://github.com/mitchmindtree/utils-rs"
 
 [dependencies]
 rand = "0.1.2"
+mindtree_utils = "*"
+
