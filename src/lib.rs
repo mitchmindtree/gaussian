@@ -8,7 +8,7 @@
 #![feature(core, std_misc)]
 
 extern crate rand;
-extern crate "mindtree_utils" as utils;
+extern crate utils;
 
 use utils::map_range;
 use rand::{Rand, random};
