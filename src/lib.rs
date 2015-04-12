@@ -5,20 +5,19 @@
 //!
 //!
 
-#![feature(core, std_misc)]
-
+extern crate num;
 extern crate rand;
 extern crate utils;
 
 use utils::map_range;
 use rand::{Rand, random};
 use std::fmt::Debug;
-use std::num::{Float, FromPrimitive};
+use num::{Float, FromPrimitive};
 
 static mut NEXT_VALUE: Option<f64> = None;
 
 #[inline]
-fn two<F>() -> F where F: Float { let one: F = Float::one(); one + one }
+fn two<F>() -> F where F: Float { let one: F = F::one(); one + one }
 
 /// Gen raw gaussian value with dist. at 0.
 #[inline]
@@ -28,7 +27,7 @@ pub fn gen_raw<F>() -> F where F: Float + FromPrimitive + Rand {
         FromPrimitive::from_f64(next_value).unwrap()
     }
     else {
-        let (zero, one, two): (F, F, F) = (Float::zero(), Float::one(), two::<F>());
+        let (zero, one, two): (F, F, F) = (F::zero(), F::one(), two::<F>());
         let (mut va, mut vb, mut s): (F, F, F) = (zero, zero, zero);
         while s >= one || s == zero {
             va = two * random::<F>() - one;
@@ -46,7 +45,7 @@ pub fn gen_raw<F>() -> F where F: Float + FromPrimitive + Rand {
 #[inline]
 pub fn gen<F>(n: F, randomness: f32) -> F
 where F: Float + Rand + FromPrimitive + Debug {
-    let (zero, one): (F, F) = (Float::zero(), Float::one());
+    let (zero, one): (F, F) = (F::zero(), F::one());
     assert!(n >= zero && n <= one, "Gaussian::gen : given `n` ({:?}) must \
             be a percentage between 0 and 1.", n);
     let mut ans = gen_raw::<F>()
@@ -64,7 +63,7 @@ where F: Float + Rand + FromPrimitive + Debug {
 #[inline]
 pub fn gen_map<F>(n: F, randomness: f32, min_range: F, max_range: F) -> F
 where F: Float + Rand + FromPrimitive + Debug {
-    let (zero, one): (F, F) = (Float::zero(), Float::one());
+    let (zero, one): (F, F) = (F::zero(), F::one());
     let perc = map_range(n, min_range, max_range, zero, one);
     map_range(gen(perc, randomness), zero, one, min_range, max_range)
 }
