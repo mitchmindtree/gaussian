@@ -11,10 +11,13 @@ extern crate utils;
 
 use utils::map_range;
 use rand::{Rand, random};
+use std::cell::RefCell;
 use std::fmt::Debug;
 use num::{Float, FromPrimitive};
 
-static mut NEXT_VALUE: Option<f64> = None;
+/// A thread local global for holding onto the second generated value without requiring the user
+/// stores an instance of some type.
+thread_local!(static MAYBE_NEXT_VALUE: RefCell<Option<f64>> = RefCell::new(None));
 
 #[inline]
 fn two<F>() -> F where F: Float { let one: F = F::one(); one + one }
@@ -22,22 +25,23 @@ fn two<F>() -> F where F: Float { let one: F = F::one(); one + one }
 /// Gen raw gaussian value with dist. at 0.
 #[inline]
 pub fn gen_raw<F>() -> F where F: Float + FromPrimitive + Rand {
-    if let Some(next_value) = unsafe { NEXT_VALUE } {
-        unsafe { NEXT_VALUE = None; }
-        FromPrimitive::from_f64(next_value).unwrap()
-    }
-    else {
-        let (zero, one, two): (F, F, F) = (F::zero(), F::one(), two::<F>());
-        let (mut va, mut vb, mut s): (F, F, F) = (zero, zero, zero);
-        while s >= one || s == zero {
-            va = two * random::<F>() - one;
-            vb = two * random::<F>() - one;
-            s = va * vb + va * vb
-        };
-        let multi = ((-two) * s.abs().ln() / s).abs().sqrt();
-        unsafe { NEXT_VALUE = (vb * multi).to_f64(); }
-        va * multi
-    }
+    MAYBE_NEXT_VALUE.with(|maybe_next_value| {
+        if let Some(next_value) = *maybe_next_value.borrow() {
+            *maybe_next_value.borrow_mut() = None;
+            FromPrimitive::from_f64(next_value).unwrap()
+        } else {
+            let (zero, one, two): (F, F, F) = (F::zero(), F::one(), two::<F>());
+            let (mut va, mut vb, mut s): (F, F, F) = (zero, zero, zero);
+            while s >= one || s == zero {
+                va = two * random::<F>() - one;
+                vb = two * random::<F>() - one;
+                s = va * vb + va * vb
+            };
+            let multi = ((-two) * s.abs().ln() / s).abs().sqrt();
+            *maybe_next_value.borrow_mut() = (vb * multi).to_f64();
+            va * multi
+        }
+    })
 }
 
 /// Gen gaussian value with dist. at 'n' with rand randomness.
@@ -52,7 +56,7 @@ where F: Float + Rand + FromPrimitive + Debug {
                 * FromPrimitive::from_f32(randomness.powf(2.0)).unwrap()
                 + (n * two::<F>() - one);
     ans = map_range(ans, -one, one, zero, one);
-    if ans > one || ans < zero {
+    if ans >= one || ans < zero {
         gen::<F>(n, randomness)
     } else {
         ans
