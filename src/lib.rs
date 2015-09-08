@@ -26,7 +26,8 @@ fn two<F>() -> F where F: Float { let one: F = F::one(); one + one }
 #[inline]
 pub fn gen_raw<F>() -> F where F: Float + FromPrimitive + Rand {
     MAYBE_NEXT_VALUE.with(|maybe_next_value| {
-        if let Some(next_value) = *maybe_next_value.borrow() {
+        let maybe_next = *maybe_next_value.borrow();
+        if let Some(next_value) = maybe_next {
             *maybe_next_value.borrow_mut() = None;
             FromPrimitive::from_f64(next_value).unwrap()
         } else {
