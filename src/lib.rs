@@ -51,7 +51,7 @@ pub fn gen_raw<F>() -> F where F: Float + FromPrimitive + Rand {
 pub fn gen<F>(n: F, randomness: f32) -> F
 where F: Float + Rand + FromPrimitive + Debug {
     let (zero, one): (F, F) = (F::zero(), F::one());
-    assert!(n >= zero && n < one, "Gaussian::gen : given `n` ({:?}) must \
+    assert!(n >= zero && n <= one, "Gaussian::gen : given `n` ({:?}) must \
             be a percentage between 0 and 1.", n);
 
     // If one was given with no randomness, return it exactly as is.
