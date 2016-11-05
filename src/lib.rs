@@ -1,15 +1,8 @@
-//!
-//!  gaussian.rs
-//!
-//!  Created by Mitchell Nordine at 03:28AM on May 30, 2014.
-//!
-//!
-
 extern crate num;
 extern crate rand;
 extern crate utils;
 
-use utils::{map_range};
+use utils::map_range;
 use rand::{Rand, random};
 use std::cell::RefCell;
 use std::fmt::Debug;
@@ -78,4 +71,3 @@ where F: Float + Rand + FromPrimitive + Debug {
     let perc = map_range(n, min_range, max_range, zero, one);
     map_range(gen(perc, randomness), zero, one, min_range, max_range)
 }
-
