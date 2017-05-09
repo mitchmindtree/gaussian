@@ -2,7 +2,7 @@
 
 name = "simple_gaussian"
 description = "Some quick and easy functions for generating gaussian noise, mappable to specific bounds. Useful for artistic purposes."
-version = "0.4.5"
+version = "0.5.0"
 authors = ["mitchmindtree <mitchell.nordine@gmail.com>"]
 readme = "README.md"
 keywords = ["noise", "gaussian", "random", "generator"]
@@ -15,5 +15,5 @@ name = "gaussian"
 
 [dependencies]
 mindtree_utils = "0.4"
-num = "0.1.36"
-rand = "0.3.14"
+num = "0.1"
+rand = "0.3"
