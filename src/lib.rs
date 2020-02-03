@@ -1,14 +1,9 @@
-extern crate num;
-extern crate rand;
-extern crate utils;
-
 /// Gen raw gaussian value with distribution mean at 0.
 pub fn gen_raw<R>(mut rng: R) -> f64
-    where R: rand::Rng,
+where
+    R: rand::Rng,
 {
-    use rand::distributions::normal::StandardNormal;
-    let StandardNormal(f) = rng.gen();
-    f
+    rng.sample(rand_distr::StandardNormal)
 }
 
 /// Generates a raw gaussian value between [0.0, 1.0) whose distribution's mean is at `value` with
@@ -18,7 +13,8 @@ pub fn gen_raw<R>(mut rng: R) -> f64
 ///
 /// **Panic**s if the `randomness` is less than 0.0 or greater than or equal to 1.0.
 pub fn gen<R>(mut rng: R, value: f64, randomness: f64) -> f64
-    where R: rand::Rng,
+where
+    R: rand::Rng,
 {
     assert!(value >= 0.0);
     assert!(value < 1.0);
@@ -46,14 +42,4 @@ pub fn gen<R>(mut rng: R, value: f64, randomness: f64) -> f64
             return (attempt + 1.0) * 0.5;
         }
     }
-}
-
-/// Generate a gaussian value mapped to the given range [min, max).
-pub fn gen_map_range<R, T>(rng: R, value: T, randomness: f64, min: T, max: T) -> T
-    where R: rand::Rng,
-          T: num::NumCast + Copy,
-{
-    let f = utils::map_range(value, min, max, 0.0, 1.0);
-    let r = gen(rng, f, randomness);
-    utils::map_range(r, 0.0, 1.0, min, max)
 }
